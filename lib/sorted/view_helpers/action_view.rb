@@ -23,10 +23,20 @@ module Sorted
         end
       end
 
-      def link_to_sorted(name, order, options = {})
+      def link_to_sorted(*args, &block)
+        if block_given?
+          name = capture(&block)
+          order = args.first
+          options = args.second || {}
+        else
+          name = args[0]
+          order = args[1]
+          options = args[2] || {}
+        end
+
         sorter          = SortedViewHelper.new(order, ((request.get? && !params.nil?) ? params.dup : {}))
         options[:class] = [options[:class], sorter.css].join(' ').strip
-        link_to(name.to_s, sorter.params, options)
+        link_to(name.to_s, sorter.params, options)        
       end
     end
   end
